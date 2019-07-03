@@ -1,0 +1,20 @@
+{
+  "name": "deployment-strategy",
+  "version": "1.0.0",
+  "description": "Automated CI/CD project to deploy code to any branch",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.hpe.com/hpe-design/deployment-strategy.git"
+  },
+  "author": "Madhu Rebbana",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4",
+    "jest": "^24.8.0"
+  }
+}

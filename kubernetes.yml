@@ -1,0 +1,91 @@
+# apiVersion: extensions/v1beta1
+# kind: Deployment
+# metadata:
+#   name: gcp-cicd-server
+#   labels:
+#     app: gcp-cicd-server
+# spec:
+#   replicas: 1
+#   template:
+#     metadata:
+#       labels:
+#         app: gcp-cicd-server
+#     spec:
+#       containers:
+#         - name: gcp-cicd-server-name
+#           image: gcr.io/hpe-dev-cicd/gcp-cicd-demo:latest
+#           env:
+#             - name: gcp-cicd-server
+#               value: "gcp-cicd-server"
+#             - name: PORT
+#               value: "8000"
+#           ports:
+#             - containerPort: 80
+#               name: gcp-cicd-server
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: demo-service
+# spec:
+#   type: NodePort
+#   ports:
+#     - targetPort: 80
+#       port: 80
+#       nodePort: 30001
+#   selector:
+#     app: gcp-cicd-server
+---
+apiVersion: "extensions/v1beta1"
+kind: "Deployment"
+metadata:
+  name: "nginx-1"
+  namespace: "default"
+  labels:
+    app: "nginx-1"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "nginx-1"
+  template:
+    metadata:
+      labels:
+        app: "nginx-1"
+    spec:
+      containers:
+      - name: "hpe-dev-cluster"
+        image: "gcr.io/hpe-dev-cicd/gcp-cicd-demo:latest"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-service
+spec:
+  type: NodePort
+  ports:
+    - targetPort: 80
+      port: 80
+      nodePort: 30001
+  selector:
+    app: nginx-1
+# ---
+# apiVersion: "autoscaling/v2beta1"
+# kind: "HorizontalPodAutoscaler"
+# metadata:
+#   name: "nginx-1-hpa"
+#   namespace: "default"
+#   labels:
+#     app: "nginx-1"
+# spec:
+#   scaleTargetRef:
+#     kind: "Deployment"
+#     name: "nginx-1"
+#     apiVersion: "apps/v1beta1"
+#   minReplicas: 1
+#   maxReplicas: 5
+#   metrics:
+#   - type: "Resource"
+#     resource:
+#       name: "cpu"
+#       targetAverageUtilization: 80
